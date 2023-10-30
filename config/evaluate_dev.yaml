@@ -1,0 +1,36 @@
+defaults:
+#  - test_suites: lb_test
+  - test_suites: lb_data
+  - agent: mile
+  - _self_
+
+#carla_sh_path: ''
+port: 2000
+
+log_level: INFO
+host: localhost
+seed: 2021
+no_rendering: false
+kill_running: true
+resume: true
+wb_project: mile
+wb_group: evaluation
+wb_tags: null
+log_video: true
+
+actors:
+  hero:
+    agent: mile
+    reward:
+      entry_point: reward.valeo_action:ValeoAction
+    terminal:
+      entry_point: terminal.leaderboard:Leaderboard
+
+# additional params
+carla_port: 2000
+tm_port: 8100
+tm_seed: 0
+
+carla_sh_path: /home/lyq/CARLA_simulator/CARLA_0.9.10.1/CarlaUE4.sh
+
+total_episodes: 101
