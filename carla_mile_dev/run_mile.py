@@ -99,7 +99,7 @@ def init_carla_env(cfg, **additional_kwargs):
     from carla_mile_dev.carla_env_mile import CarlaEnvMile
 
     env = CarlaEnvMile(
-        # town='Town07',
+
         config=config,
         carla_port=cfg['carla_port'],
         tm_port=cfg['tm_port'],

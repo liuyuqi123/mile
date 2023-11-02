@@ -68,12 +68,11 @@ class CarlaEnvMile(gym.Env):
     # todo add setter APIs
     # critical parameters for experiments
     simulator_timestep_length = 0.05
+    # simulator_timestep_length = 0.02
 
     # frame numbers in each RL step
-    frame_skipping_factor = int(2)
-
-    # # try to fix the sparse issue
-    # frame_skipping_factor = int(3)
+    # frame_skipping_factor = int(2)
+    frame_skipping_factor = int(1)
 
     # max episode time in seconds
     max_episode_time = 60  # default episode length in seconds, og 60
@@ -441,19 +440,8 @@ class CarlaEnvMile(gym.Env):
         # episode ending flag
         self.collision_stop = collision_stop
 
+        # ============================================================
         # MILE methods
-        self._pixels_per_meter = 5.
-
-        # original impl in MILE
-        # from pathlib import Path
-        # self._map_dir = Path(__file__).resolve().parent / 'maps'
-        # maps_h5_path = self._map_dir / (self.world.get_map().name + '.h5')
-
-        # TODO import the map dir by solving related path
-        self._map_dir = '/home/lyq/PycharmProjects/mile/carla_gym/core/obs_manager/birdview/maps'
-        maps_h5_path = os.path.join(self._map_dir, (self.world.get_map().name + '.h5'))
-        with h5py.File(maps_h5_path, 'r', libver='latest', swmr=True) as hf:
-            self._world_offset = np.array(hf.attrs['world_offset_in_meters'], dtype=np.float32)
 
         # for route generation
         self.entrance_point = self.config['ego']['entrance_point']
@@ -473,6 +461,9 @@ class CarlaEnvMile(gym.Env):
 
         # init the action and obs spaces
         self.init_spaces()
+
+        # # TODO deactivate the traffic flow to debug the mile agent
+        # self.traffic_flow_manager.use_traffic_flow(False)
 
         # todo print additional info, port number, and assign an ID for env
         print('A gym-carla env is initialized.')
@@ -707,10 +698,10 @@ class CarlaEnvMile(gym.Env):
         # # different settings for multi-task
         # min_npc_number = 5 if self.multi_task else 5
 
-        # # same npc number
-        # min_npc_number = 5
-        # TODO debug the mile method
-        min_npc_number = 0
+        # same npc number
+        min_npc_number = 4
+        # # TODO debug the mile method
+        # min_npc_number = 0
 
         # =====  traffic lights state  =====
         # get target traffic lights phase according to route_option
@@ -986,7 +977,7 @@ class CarlaEnvMile(gym.Env):
                 self.end_waypoint.transform,
             ],
             spawn_transforms=self.spawn_waypoint.transform,
-            endless=False,
+            endless=True,
         )
 
         # set initial speed
@@ -1001,9 +992,7 @@ class CarlaEnvMile(gym.Env):
         # # reset the state manager with ego vehicle and sensors
         # self.state_manager.reset(self.ego_vehicle, self.ego_sensors)
 
-        task_vehicles = {
-            'hero': self.task_vehicles,
-        }
+        task_vehicles = {'hero': self.task_vehicles}
         self._om_handler.reset(task_vehicles)
 
         self.try_tick_carla()
@@ -1062,52 +1051,6 @@ class CarlaEnvMile(gym.Env):
         self.ego_transform = self.ego_vehicle.get_transform()
         self.ego_location = self.ego_transform.location
 
-    def plot_route_map(self):
-        """
-        Visualization for the route map.
-        """
-
-        pass
-
-    def get_local_route(self):
-        """
-        Generate the
-        """
-
-        pass
-
-    def get_route_map(self):
-        """
-        Get route map of the ego vehicle.
-        """
-
-        # TODO get the route map traj and transform to the BEV image(array)
-        print('Finish getting the route map.')
-
-    def transform_route_image(self):
-        """
-        Transform to the BEV image(array)
-        """
-
-        # TODO fix this part
-        route_map_image = None
-        route_in_pixel = np.array([[self._world_to_pixel(wp.transform.location)]
-                                   for wp, _ in self._parent_actor.route_plan[0:80]])
-
-        return route_map_image
-
-    def _world_to_pixel(self, location, projective=False):
-        """Converts the world coordinates to pixel coordinates"""
-
-        x = self._pixels_per_meter * (location.x - self._world_offset[0])
-        y = self._pixels_per_meter * (location.y - self._world_offset[1])
-
-        if projective:
-            p = np.array([x, y, 1], dtype=np.float32)
-        else:
-            p = np.array([x, y], dtype=np.float32)
-        return p
-
     def buffer_waypoint(self):
         """
         Buffering waypoints for planner.
@@ -1161,6 +1104,8 @@ class CarlaEnvMile(gym.Env):
         self.timestamp['simulation_time'] = snap_shot.timestamp.elapsed_seconds
         self.timestamp['relative_simulation_time'] = self.timestamp['simulation_time'] \
             - self.timestamp['start_simulation_time']
+
+        # info_criteria = self.task_vehicles.tick(self.timestamp)
 
         # get observations
         obs_dict = self._om_handler.get_observation(self.timestamp)
@@ -1243,9 +1188,8 @@ class CarlaEnvMile(gym.Env):
 
             # ----------------  NOTICE: merge collision check into tick_simulation method  ----------------
 
-            # # TODO debug the mile running
-            # # spawn new NPC vehicles
-            # self.traffic_flow_manager.run_step_1()
+            # spawn new NPC vehicles
+            self.traffic_flow_manager.run_step_1()
 
             # frame, elapsed_seconds = self.get_frame()
             # print('-----'*5)
@@ -1616,7 +1560,6 @@ class CarlaEnvMile(gym.Env):
         #     if elapsed < self.server_dt:
         #         time.sleep(self.server_dt - elapsed)
 
-        # todo render in local map
         # ===================   render local map in pygame   ===================
         #
         # vehicle_poly_dict = self.localmap.get_actor_polygons(filter='vehicle.*')
