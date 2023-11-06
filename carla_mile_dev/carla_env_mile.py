@@ -699,7 +699,7 @@ class CarlaEnvMile(gym.Env):
         # min_npc_number = 5 if self.multi_task else 5
 
         # same npc number
-        min_npc_number = 4
+        min_npc_number = 5
         # # TODO debug the mile method
         # min_npc_number = 0
 
@@ -951,6 +951,10 @@ class CarlaEnvMile(gym.Env):
 
         # check and destroy ego vehicle and its sensors
         if self.ego_vehicle:
+
+            # mile
+            self._om_handler.clean()
+
             self.destroy()
             # make destroy ego vehicle take effect
             self.tick_simulation()

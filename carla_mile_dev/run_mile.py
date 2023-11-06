@@ -8,8 +8,10 @@ import glob
 
 # 1660ti laptop
 sys.path.append('/home/liuyuqi/PycharmProjects/gym-carla/')
+sys.path.append('/home/liuyuqi/PycharmProjects/mile/')
 # 3080ti PC
 sys.path.append('/home/lyq/PycharmProjects/gym-carla/')
+sys.path.append('/home/lyq/PycharmProjects/mile/')
 
 # ================   Append CARLA Path   ================
 from carla_config import version_config
@@ -181,11 +183,11 @@ def test_loop(cfg: DictConfig):
     # # reset internal episode number counter
     # env.reset_episode_count()
 
-    # ============================================================
-    # render images
-    surface = pygame.display.set_mode(
-        (1472, 430),
-        pygame.HWSURFACE | pygame.DOUBLEBUF)
+    # # ============================================================
+    # # render images
+    # surface = pygame.display.set_mode(
+    #     (1472, 430),
+    #     pygame.HWSURFACE | pygame.DOUBLEBUF)
 
     # traffic manager random seed
     random_seed = 0
@@ -209,17 +211,17 @@ def test_loop(cfg: DictConfig):
             next_state, reward, done, info = env.step(action)
             timestamp = env.timestamp
 
-            render_imgs = []
-            reward_debug, terminal_debug = None, None
-
-            render_imgs.append(mile_agent.render(reward_debug=reward_debug, terminal_debug=terminal_debug))
-
-            # visualize the stored image
-            _render_image = tile_images(render_imgs)
-
-            image_surface = pygame.surfarray.make_surface(_render_image.transpose(1, 0, 2))
-            surface.blit(image_surface, (0, 0))
-            pygame.display.flip()
+            # render_imgs = []
+            # reward_debug, terminal_debug = None, None
+            #
+            # render_imgs.append(mile_agent.render(reward_debug=reward_debug, terminal_debug=terminal_debug))
+            #
+            # # visualize the stored image
+            # _render_image = tile_images(render_imgs)
+            #
+            # image_surface = pygame.surfarray.make_surface(_render_image.transpose(1, 0, 2))
+            # surface.blit(image_surface, (0, 0))
+            # pygame.display.flip()
 
             episode_reward += reward
             if done:
