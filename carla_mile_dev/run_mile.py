@@ -79,13 +79,15 @@ def init_carla_env(cfg, **additional_kwargs):
     # ============================================================
     # scenario config
 
-    from gym_carla.modules.trafficflow.traffic_flow_config import config_default as config
+    # from gym_carla.modules.trafficflow.traffic_flow_config import config_default as config
     # from gym_carla.modules.trafficflow.traffic_flow_config import config as config
-    # from gym_carla.modules.trafficflow.traffic_flow_config import config3 as config
-    # from gym_carla.modules.trafficflow.traffic_flow_config import config6 as config
+    # from gym_carla.modules.trafficflow.traffic_flow_config import config3b as config
+    from gym_carla.modules.trafficflow.traffic_flow_config import config6 as config
+    # from gym_carla.modules.trafficflow.traffic_flow_config import config_town03_238 as config
 
     # # deprecated
     # from gym_carla.modules.trafficflow.traffic_flow_config import config2 as config
+    # from gym_carla.modules.trafficflow.traffic_flow_config import config3 as config
     # from gym_carla.modules.trafficflow.traffic_flow_config import config4 as config
     # from gym_carla.modules.trafficflow.traffic_flow_config import config5 as config
 

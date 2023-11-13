@@ -162,7 +162,7 @@ class CarlaEnvMile(gym.Env):
             tm_seed=int(0),  # seed for autopilot controlled NPC vehicles
 
             train=True,  # training mode or evaluation mode
-            collision_prob=0.99,  # collision prob for the test mode
+            collision_prob=0.9,  # collision prob for the test mode
 
             task_option='left',  # all available route options stored in the class attributes
             attention=False,
